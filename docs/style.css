@@ -1,0 +1,12 @@
+* { box-sizing: border-box; }
+body { font-family: Arial, Helvetica, sans-serif; margin: 0; background: #f6f7fb; color: #111; }
+main { max-width: 960px; margin: 24px auto; padding: 16px; }
+h1 { margin-top: 0; }
+.video-container { position: relative; width: 100%; max-width: 720px; background: black; }
+video, canvas { width: 100%; height: auto; display: block; }
+canvas { position: absolute; left: 0; top: 0; pointer-events: none; }
+.info { margin-top: 12px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.controls { margin-top: 12px; }
+button { padding: 8px 12px; margin-right: 8px; }
+.note { color: #666; font-size: 0.9rem; margin-top:8px }
+footer { margin-top: 20px; color: #555; font-size: 0.9rem }

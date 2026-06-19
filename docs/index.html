@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WorkoutCounter — Web Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>WorkoutCounter — Web Demo</h1>
+
+    <div id="app">
+      <div class="video-container">
+        <video id="video" playsinline autoplay muted></video>
+        <canvas id="overlay"></canvas>
+      </div>
+
+      <div class="info">
+        <div>Упражнение: <span id="exercise">—</span></div>
+        <div>Подходы: <span id="sets">0</span></div>
+        <div>Повторы: <span id="reps">0</span></div>
+        <div>Состояние: <span id="state">Idle</span></div>
+        <div id="rest" style="display:none">Таймер отдыха: <span id="restTime">0</span> с</div>
+      </div>
+
+      <div class="controls">
+        <button id="startBtn">Start Session</button>
+        <button id="stopBtn">Stop Session</button>
+        <p class="note">Запустите камеру и встаньте в кадр. Это демо работает в браузере (локально/Pages).</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>Использует TensorFlow.js MoveNet для обнаружения позы в браузере. Работает офлайн в браузере.</p>
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@3.21.0/dist/tf-backend-webgl.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
