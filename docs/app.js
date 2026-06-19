@@ -149,12 +149,58 @@
     detector = await poseDetection.createDetector(model, detectorConfig);
   }
 
+  // smoothing state for keypoints
+  let prevKps = null;
+  const SMOOTHING_ALPHA = 0.75; // higher = smoother
+
+  function smoothKeypoints(kps){
+    if(!kps) return kps;
+    if(!prevKps){
+      prevKps = kps.map(p => ({x: p.x, y: p.y, score: p.score}));
+      return prevKps;
+    }
+    for(let i=0;i<kps.length;i++){
+      const p = kps[i];
+      if(!p) continue;
+      if(p.score > 0.15){
+        prevKps[i] = prevKps[i] || {x: p.x, y: p.y, score: p.score};
+        prevKps[i].x = SMOOTHING_ALPHA * prevKps[i].x + (1 - SMOOTHING_ALPHA) * p.x;
+        prevKps[i].y = SMOOTHING_ALPHA * prevKps[i].y + (1 - SMOOTHING_ALPHA) * p.y;
+        prevKps[i].score = p.score;
+      } else {
+        // decay score if missing
+        if(prevKps[i]) prevKps[i].score = Math.max(0, prevKps[i].score * 0.9);
+      }
+    }
+    return prevKps;
+  }
+
+  const SKELETON = [
+    [0,1],[0,2],[1,3],[2,4],[5,6],[5,7],[7,9],[6,8],[8,10],[11,12],[11,13],[13,15],[12,14],[14,16],[23,24],[11,23],[12,24],[23,25],[24,26],[25,27],[26,28]
+  ];
+
+  function drawSkeleton(kps){
+    ctx.lineWidth = 2;
+    for(const [a,b] of SKELETON){
+      const p1 = kps[a]; const p2 = kps[b];
+      if(!p1 || !p2) continue;
+      if(p1.score > 0.2 && p2.score > 0.2){
+        ctx.strokeStyle = 'rgba(0,200,120,0.9)';
+        ctx.beginPath();
+        ctx.moveTo(p1.x * canvas.width, p1.y * canvas.height);
+        ctx.lineTo(p2.x * canvas.width, p2.y * canvas.height);
+        ctx.stroke();
+      }
+    }
+  }
+
   function drawKeypoints(keypoints){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     if(!keypoints) return;
-    ctx.strokeStyle = 'lime'; ctx.lineWidth = 2; ctx.fillStyle = 'red';
+    drawSkeleton(keypoints);
+    ctx.fillStyle = '#ff4757';
     keypoints.forEach(k => {
-      if(k.score > 0.3){
+      if(k && k.score > 0.2){
         ctx.beginPath(); ctx.arc(k.x * canvas.width, k.y * canvas.height, 4, 0, Math.PI*2); ctx.fill();
       }
     });
@@ -164,7 +210,8 @@
     if(!running) return;
     const poses = await detector.estimatePoses(video, {flipHorizontal: true});
     const pose = poses && poses[0] ? poses[0] : null;
-    const kps = pose ? pose.keypoints.map(k => ({x: k.x / video.videoWidth, y: k.y / video.videoHeight, score: k.score})) : null;
+    let kps = pose ? pose.keypoints.map(k => ({x: k.x / video.videoWidth, y: k.y / video.videoHeight, score: k.score})) : null;
+    kps = smoothKeypoints(kps);
 
     drawKeypoints(kps);
 
@@ -192,6 +239,8 @@
         const repDone = repCounter.process(kps);
         if(repDone){
           repCount = repCounter.getCount(); repsEl.textContent = repCount;
+          // voice feedback
+          try{ window.speechSynthesis.speak(new SpeechSynthesisUtterance(repCount + ' повтор')); }catch(e){}
         }
       }
       // detect standing (end set)
