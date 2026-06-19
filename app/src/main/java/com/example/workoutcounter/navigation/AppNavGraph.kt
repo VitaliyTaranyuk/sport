@@ -5,13 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.workoutcounter.ui.home.HomeScreen
-import com.example.workoutcounter.ui.training.SelectExerciseScreen
-import com.example.workoutcounter.ui.training.CameraScreen
-import com.example.workoutcounter.ui.plan.PlanScreen
-import com.example.workoutcounter.ui.history.HistoryScreen
-import com.example.workoutcounter.ui.statistics.StatisticsScreen
-import com.example.workoutcounter.ui.settings.SettingsScreen
+import com.example.workoutcounter.ui.screens.HomeScreen
+import com.example.workoutcounter.ui.screens.SelectExerciseScreen
+import com.example.workoutcounter.ui.screens.CameraScreen
+import com.example.workoutcounter.ui.screens.PlanScreen
+import com.example.workoutcounter.ui.screens.HistoryScreen
+import com.example.workoutcounter.ui.screens.StatisticsScreen
+import com.example.workoutcounter.ui.screens.SettingsScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController = rememberNavController()) {
